@@ -46,7 +46,7 @@ const STATUS_BADGE: Record<ConceptStatus, { label: string; variant: 'default' | 
 // ── main component ────────────────────────────────────────────────────────────
 
 export function Areas() {
-  const { areas, createArea, toggleArea, deleteArea } = useAreas();
+  const { areas, createArea, editArea, toggleArea, deleteArea } = useAreas();
   const { concepts, createConcept, deleteConcept }    = useConcepts();
 
   const [expanded, setExpanded]           = useState<Set<string>>(new Set());
@@ -64,8 +64,9 @@ export function Areas() {
   const handleSaveArea = async (data: { name: string; color: AreaColor; icon: AreaIcon }) => {
     if (areaModal === 'new') {
       await createArea(data);
+    } else if (areaModal) {
+      await editArea(areaModal.id, data);
     }
-    // edit — would call updateArea; skipped for now since hook doesn't expose it yet
   };
 
   const confirmDelete = async (id: string) => {

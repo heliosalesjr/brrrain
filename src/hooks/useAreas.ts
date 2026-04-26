@@ -71,6 +71,15 @@ export function useAreas() {
     await updateDoc(doc(db, 'areas', id).withConverter(areaConverter), { isActive });
   };
 
+  const editArea = async (id: string, partial: { name?: string; color?: AreaColor; icon?: AreaIcon }) => {
+    if (!isConfigured || !db) {
+      updateArea(id, partial);
+      return;
+    }
+    await updateDoc(doc(db, 'areas', id).withConverter(areaConverter), partial);
+    updateArea(id, partial);
+  };
+
   const deleteArea = async (id: string) => {
     if (!isConfigured || !db) {
       removeArea(id);
@@ -79,5 +88,5 @@ export function useAreas() {
     await deleteDoc(doc(db, 'areas', id));
   };
 
-  return { areas, createArea, toggleArea, deleteArea };
+  return { areas, createArea, editArea, toggleArea, deleteArea };
 }
