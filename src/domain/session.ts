@@ -10,38 +10,38 @@ export interface SessionPhase {
 export const SESSION_PHASES: SessionPhase[] = [
   {
     id: 0,
-    label: 'Preparação',
+    label: 'Preparation',
     duration: '0–5 min',
     durationMinutes: [0, 5],
     instruction:
-      'Revise brevemente o que você sabe sobre o tema antes de começar. Sem consultar materiais — apenas retrieval mental.',
+      'Briefly review what you already know about the topic before starting. No materials — mental retrieval only.',
     isRequired: true,
   },
   {
     id: 1,
-    label: 'Estudo ativo',
+    label: 'Active study',
     duration: '5–30 min',
     durationMinutes: [5, 30],
     instruction:
-      'Estude o material principal. Processe ativamente: faça perguntas, crie exemplos, conecte com o que já sabe.',
+      'Study the main material. Process actively: ask questions, create examples, connect with what you already know.',
     isRequired: true,
   },
   {
     id: 2,
-    label: 'Elaboração',
+    label: 'Elaboration',
     duration: '30–40 min',
     durationMinutes: [30, 40],
     instruction:
-      'Crie flashcards e faça anotações de síntese. Foco em conceitos-chave e conexões entre ideias.',
+      'Create flashcards and synthesis notes. Focus on key concepts and connections between ideas.',
     isRequired: true,
   },
   {
     id: 3,
-    label: 'Consolidação',
+    label: 'Consolidation',
     duration: '40–45 min',
     durationMinutes: [40, 45],
     instruction:
-      'Feche o material e tente explicar o conceito principal em suas próprias palavras. Identifique lacunas.',
+      'Close the material and try to explain the main concept in your own words. Identify any remaining gaps.',
     isRequired: false,
   },
 ];

@@ -23,8 +23,8 @@ export function getRescueProtocol(
     return {
       gapDays,
       type: 'rescue',
-      title: 'Sessão de resgate',
-      description: `Você ficou ${gapDays} dias sem estudar. Faça uma sessão de resgate com retrieval ativo para reconsolidar o material.`,
+      title: 'Rescue session',
+      description: `You have been away for ${gapDays} days. Do a rescue session with active retrieval to reconsolidate the material.`,
       recommendedDuration: '20–30 min',
       areasToFocus: -1,
     };
@@ -34,9 +34,9 @@ export function getRescueProtocol(
     return {
       gapDays,
       type: 'quick-review',
-      title: 'Revisão rápida por área',
-      description: `${gapDays} dias de pausa. Faça uma revisão rápida de 15 minutos por área para reativar o material antes de avançar.`,
-      recommendedDuration: '15 min/área',
+      title: 'Quick review by area',
+      description: `${gapDays} days away. Do a quick 15-minute review per area to reactivate the material before moving forward.`,
+      recommendedDuration: '15 min/area',
       areasToFocus: -1,
     };
   }
@@ -44,8 +44,8 @@ export function getRescueProtocol(
   return {
     gapDays,
     type: 'partial-restart',
-    title: 'Reinício parcial recomendado',
-    description: `${gapDays} dias de pausa. Reduza o foco para 1 área por enquanto e reconstrua o ritmo gradualmente antes de retomar todas as áreas.`,
+    title: 'Partial restart recommended',
+    description: `${gapDays} days away. Reduce focus to 1 area for now and rebuild your rhythm gradually before resuming all areas.`,
     recommendedDuration: '30–45 min',
     areasToFocus: 1,
   };

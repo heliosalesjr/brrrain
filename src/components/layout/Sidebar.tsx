@@ -1,7 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import {
   LayoutDashboard,
-  BookOpen,
   RotateCcw,
   Layers,
   Brain,
@@ -17,9 +16,8 @@ interface SidebarProps {
 
 const navItems = [
   { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
-  { to: '/review', icon: RotateCcw, label: 'Revisões' },
-  { to: '/session/new', icon: BookOpen, label: 'Sessão' },
-  { to: '/areas', icon: Layers, label: 'Áreas' },
+  { to: '/review', icon: RotateCcw, label: 'Reviews' },
+  { to: '/areas', icon: Layers, label: 'Areas' },
 ];
 
 const areaColorMap: Record<string, string> = {
@@ -85,7 +83,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
           <div className={`pt-4 mt-4 border-t border-gray-700 ${collapsed ? '' : ''}`}>
             {!collapsed && (
               <p className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-                Áreas ativas
+                Active areas
               </p>
             )}
             {areas.slice(0, 8).map((area) => {
@@ -115,7 +113,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                     <span className="truncate">{area.name}</span>
                   )}
                   {!collapsed && isSelected && (
-                    <span className="ml-auto text-gray-400 text-[10px] font-normal">ativa</span>
+                    <span className="ml-auto text-gray-400 text-[10px] font-normal">active</span>
                   )}
                 </button>
               );

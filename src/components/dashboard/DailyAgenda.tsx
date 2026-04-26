@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { BookOpen, Play, ChevronRight, Calendar } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
@@ -9,10 +10,10 @@ interface DailyAgendaProps {
 }
 
 const sessionTypeLabel: Record<DailyAgendaItem['sessionType'], string> = {
-  initial: 'Nova sessão',
-  practice: 'Prática',
-  review: 'Revisão',
-  rescue: 'Resgate',
+  initial: 'New session',
+  practice: 'Practice',
+  review: 'Review',
+  rescue: 'Rescue',
 };
 
 const sessionTypeBadge: Record<
@@ -33,13 +34,15 @@ const priorityColors: Record<number, string> = {
 };
 
 export function DailyAgenda({ items }: DailyAgendaProps) {
+  const navigate = useNavigate();
+
   if (items.length === 0) {
     return (
       <Card className="p-8 text-center">
         <Calendar className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-        <p className="font-medium text-gray-600">Nada agendado para hoje</p>
+        <p className="font-medium text-gray-600">Nothing scheduled for today</p>
         <p className="text-sm text-gray-400 mt-1">
-          Adicione conceitos nas suas áreas para começar a estudar.
+          Add concepts to your areas to start studying.
         </p>
       </Card>
     );
@@ -67,9 +70,14 @@ export function DailyAgenda({ items }: DailyAgendaProps) {
                 </p>
               </div>
             </div>
-            <Button variant="primary" size="sm" className="flex-shrink-0">
+            <Button
+              variant="primary"
+              size="sm"
+              className="flex-shrink-0"
+              onClick={() => navigate(`/session/${item.conceptId}`)}
+            >
               <Play className="w-3 h-3" />
-              Iniciar
+              Start
               <ChevronRight className="w-3 h-3" />
             </Button>
           </div>

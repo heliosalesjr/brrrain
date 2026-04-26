@@ -3,6 +3,7 @@ import { AppLayout } from '@/components/layout/AppLayout';
 import { Dashboard } from '@/pages/Dashboard';
 import { Login } from '@/pages/Login';
 import { Areas } from '@/pages/Areas';
+import { Session } from '@/pages/Session';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 
 const ComingSoon = ({ title }: { title: string }) => (
@@ -26,8 +27,8 @@ export const router = createBrowserRouter([
     ),
     children: [
       { index: true, element: <Dashboard /> },
-      { path: 'session/:id', element: <ComingSoon title="Sessão de Estudo" /> },
-      { path: 'review', element: <ComingSoon title="Revisão de Flashcards" /> },
+      { path: 'session/:id', element: <Session /> },
+      { path: 'review', element: <ComingSoon title="Flashcard Review" /> },
       { path: 'areas', element: <Areas /> },
     ],
   },

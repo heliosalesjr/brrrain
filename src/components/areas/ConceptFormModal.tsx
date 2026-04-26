@@ -9,9 +9,9 @@ interface Props {
 }
 
 export function ConceptFormModal({ areaId, onSave, onClose }: Props) {
-  const [title, setTitle]       = useState('');
-  const [description, setDesc]  = useState('');
-  const [saving, setSaving]     = useState(false);
+  const [title, setTitle]      = useState('');
+  const [description, setDesc] = useState('');
+  const [saving, setSaving]    = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,7 +26,7 @@ export function ConceptFormModal({ areaId, onSave, onClose }: Props) {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40">
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-md">
         <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-gray-100">
-          <h2 className="text-base font-semibold text-gray-800">Novo conceito</h2>
+          <h2 className="text-base font-semibold text-gray-800">New concept</h2>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
             <X className="w-5 h-5" />
           </button>
@@ -34,12 +34,12 @@ export function ConceptFormModal({ areaId, onSave, onClose }: Props) {
 
         <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Título</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
             <input
               autoFocus
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="ex: Closures em JavaScript"
+              placeholder="e.g.: Closures in JavaScript"
               className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm
                          focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
             />
@@ -47,12 +47,12 @@ export function ConceptFormModal({ areaId, onSave, onClose }: Props) {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Descrição <span className="text-gray-400 font-normal">(opcional)</span>
+              Description <span className="text-gray-400 font-normal">(optional)</span>
             </label>
             <textarea
               value={description}
               onChange={(e) => setDesc(e.target.value)}
-              placeholder="Uma breve descrição do que você quer aprender…"
+              placeholder="A brief description of what you want to learn..."
               rows={3}
               className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm resize-none
                          focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
@@ -61,10 +61,10 @@ export function ConceptFormModal({ areaId, onSave, onClose }: Props) {
 
           <div className="flex justify-end gap-2 pt-1">
             <Button type="button" variant="secondary" onClick={onClose}>
-              Cancelar
+              Cancel
             </Button>
             <Button type="submit" disabled={!title.trim() || saving}>
-              {saving ? 'Salvando…' : 'Adicionar'}
+              {saving ? 'Saving...' : 'Add'}
             </Button>
           </div>
         </form>

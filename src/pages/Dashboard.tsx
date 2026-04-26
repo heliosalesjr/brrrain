@@ -37,25 +37,22 @@ export function Dashboard() {
 
   return (
     <div className="max-w-5xl mx-auto space-y-6">
-      {/* Firebase not configured notice */}
       {!isConfigured && (
         <div className="flex items-start gap-3 px-4 py-3 bg-blue-50 border border-blue-200 rounded-xl text-blue-700">
           <Info className="w-5 h-5 mt-0.5 flex-shrink-0" />
           <div>
-            <p className="text-sm font-semibold">Firebase não configurado</p>
+            <p className="text-sm font-semibold">Firebase not configured</p>
             <p className="text-sm opacity-90">
-              Exibindo dados demonstrativos. Copie{' '}
-              <code className="bg-blue-100 px-1 rounded">.env.example</code> para{' '}
-              <code className="bg-blue-100 px-1 rounded">.env</code> e preencha com suas credenciais Firebase.
+              Showing demo data. Copy{' '}
+              <code className="bg-blue-100 px-1 rounded">.env.example</code> to{' '}
+              <code className="bg-blue-100 px-1 rounded">.env</code> and fill in your Firebase credentials.
             </p>
           </div>
         </div>
       )}
 
-      {/* Rescue alert */}
       {rescue && <RescueAlert protocol={rescue} />}
 
-      {/* Stats row */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <StreakWidget />
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 flex items-center gap-4">
@@ -63,8 +60,8 @@ export function Dashboard() {
             <span className="text-2xl font-bold text-brand-500">{agendaItems.length}</span>
           </div>
           <div>
-            <p className="text-sm text-gray-500">Para hoje</p>
-            <p className="text-xs text-gray-400">conceitos agendados</p>
+            <p className="text-sm text-gray-500">Today</p>
+            <p className="text-xs text-gray-400">scheduled concepts</p>
           </div>
         </div>
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 flex items-center gap-4">
@@ -72,27 +69,25 @@ export function Dashboard() {
             <span className="text-2xl font-bold text-orange-500">{dueReviewsToday.length}</span>
           </div>
           <div>
-            <p className="text-sm text-gray-500">Revisões</p>
-            <p className="text-xs text-gray-400">flashcards vencidos</p>
+            <p className="text-sm text-gray-500">Reviews</p>
+            <p className="text-xs text-gray-400">due flashcards</p>
           </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left: Agenda + Review queue */}
         <div className="lg:col-span-2 space-y-6">
           <section>
-            <h2 className="text-base font-semibold text-gray-700 mb-3">Agenda do dia</h2>
+            <h2 className="text-base font-semibold text-gray-700 mb-3">Today's agenda</h2>
             <DailyAgenda items={agendaItems} />
           </section>
 
           <section>
-            <h2 className="text-base font-semibold text-gray-700 mb-3">Fila de revisão</h2>
+            <h2 className="text-base font-semibold text-gray-700 mb-3">Review queue</h2>
             <ReviewQueue dueCards={filteredDueCards} areas={areas} />
           </section>
         </div>
 
-        {/* Right: Study links */}
         <div>
           <StudyLinksPanel areaId={activeAreaId} />
         </div>

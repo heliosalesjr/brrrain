@@ -12,13 +12,13 @@ interface Props {
 }
 
 const MEDIA_TYPES: { value: LinkMediaType; label: string; Icon: React.FC<{ className?: string }> }[] = [
-  { value: 'video',   label: 'Vídeo',   Icon: Video },
-  { value: 'article', label: 'Artigo',  Icon: FileText },
+  { value: 'video',   label: 'Video',   Icon: Video },
+  { value: 'article', label: 'Article', Icon: FileText },
   { value: 'pdf',     label: 'PDF',     Icon: File },
-  { value: 'book',    label: 'Livro',   Icon: BookOpen },
-  { value: 'audio',   label: 'Áudio',   Icon: Headphones },
-  { value: 'course',  label: 'Curso',   Icon: GraduationCap },
-  { value: 'website', label: 'Site',    Icon: Globe },
+  { value: 'book',    label: 'Book',    Icon: BookOpen },
+  { value: 'audio',   label: 'Audio',   Icon: Headphones },
+  { value: 'course',  label: 'Course',  Icon: GraduationCap },
+  { value: 'website', label: 'Website', Icon: Globe },
 ];
 
 const MEDIA_ICON: Record<LinkMediaType, React.FC<{ className?: string }>> = {
@@ -33,11 +33,11 @@ const MEDIA_ICON: Record<LinkMediaType, React.FC<{ className?: string }>> = {
 
 export function StudyLinksPanel({ areaId }: Props) {
   const { links, createLink, deleteLink } = useStudyLinks(areaId ?? undefined);
-  const [adding, setAdding]         = useState(false);
-  const [title, setTitle]           = useState('');
-  const [url, setUrl]               = useState('');
-  const [mediaType, setMediaType]   = useState<LinkMediaType>('website');
-  const [saving, setSaving]         = useState(false);
+  const [adding, setAdding]       = useState(false);
+  const [title, setTitle]         = useState('');
+  const [url, setUrl]             = useState('');
+  const [mediaType, setMediaType] = useState<LinkMediaType>('website');
+  const [saving, setSaving]       = useState(false);
 
   const reset = () => { setTitle(''); setUrl(''); setMediaType('website'); setAdding(false); };
 
@@ -56,7 +56,7 @@ export function StudyLinksPanel({ areaId }: Props) {
       <div className="flex items-center justify-between mb-3">
         <h2 className="text-base font-semibold text-gray-700 flex items-center gap-2">
           <Link2 className="w-4 h-4 text-gray-400" />
-          Acesso a conteúdos
+          Study materials
         </h2>
         {!adding && areaId && (
           <button
@@ -68,21 +68,19 @@ export function StudyLinksPanel({ areaId }: Props) {
         )}
       </div>
 
-      {/* No area selected */}
       {!areaId && (
         <p className="text-xs text-gray-400 py-4 text-center">
-          Selecione uma área na barra lateral para ver os conteúdos.
+          Select an area from the sidebar to see its materials.
         </p>
       )}
 
-      {/* Add form */}
       {adding && (
         <form onSubmit={handleSave} className="mb-4 space-y-3 bg-gray-50 rounded-xl p-3">
           <input
             autoFocus
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="Nome do material"
+            placeholder="Material name"
             className="w-full px-3 py-1.5 rounded-lg border border-gray-200 text-sm
                        focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
           />
@@ -93,7 +91,6 @@ export function StudyLinksPanel({ areaId }: Props) {
             className="w-full px-3 py-1.5 rounded-lg border border-gray-200 text-sm
                        focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
           />
-          {/* Media type */}
           <div className="flex gap-1 flex-wrap">
             {MEDIA_TYPES.map(({ value, label, Icon }) => (
               <button
@@ -112,19 +109,18 @@ export function StudyLinksPanel({ areaId }: Props) {
           </div>
           <div className="flex gap-2">
             <Button type="button" variant="secondary" size="sm" onClick={reset} className="flex-1">
-              Cancelar
+              Cancel
             </Button>
             <Button type="submit" size="sm" disabled={!title.trim() || !url.trim() || saving} className="flex-1">
-              {saving ? 'Salvando…' : 'Adicionar'}
+              {saving ? 'Saving...' : 'Add'}
             </Button>
           </div>
         </form>
       )}
 
-      {/* Links list */}
       {areaId && links.length === 0 && !adding && (
         <p className="text-xs text-gray-400 py-4 text-center">
-          Nenhum material ainda. Clique em + para adicionar.
+          No materials yet. Click + to add one.
         </p>
       )}
 

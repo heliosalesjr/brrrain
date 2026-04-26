@@ -45,7 +45,7 @@ export function Login() {
     try {
       await signInWithGoogle();
     } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Erro ao entrar com Google';
+      const msg = err instanceof Error ? err.message : 'Error signing in with Google';
       // User closed the popup — not a real error
       if (!msg.includes('popup-closed')) setError(msg);
     } finally {
@@ -63,7 +63,7 @@ export function Login() {
           </div>
           <span className="text-2xl font-bold text-gray-900 tracking-tight">brrrain</span>
         </div>
-        <p className="text-sm text-gray-500 mb-8">Plataforma de aprendizado pessoal</p>
+        <p className="text-sm text-gray-500 mb-8">Personal learning platform</p>
 
         {/* Sign-in */}
         <button
@@ -80,7 +80,7 @@ export function Login() {
           "
         >
           <GoogleIcon />
-          {signingIn ? 'Entrando...' : 'Entrar com Google'}
+          {signingIn ? 'Signing in...' : 'Sign in with Google'}
         </button>
 
         {error && (
@@ -90,7 +90,7 @@ export function Login() {
         )}
 
         <p className="mt-6 text-xs text-gray-400">
-          Acesso restrito. Apenas contas autorizadas.
+          Restricted access. Authorized accounts only.
         </p>
       </div>
     </div>

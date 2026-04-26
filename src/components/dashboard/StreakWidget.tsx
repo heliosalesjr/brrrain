@@ -24,12 +24,12 @@ export function StreakWidget() {
       <div>
         <p className="text-2xl font-bold text-gray-900">{streak}</p>
         <p className="text-sm text-gray-500">
-          {streak === 1 ? 'dia consecutivo' : 'dias consecutivos'}
+          {streak === 1 ? 'day streak' : 'day streak'}
         </p>
       </div>
       {streak >= 7 && (
         <span className="ml-auto text-xs font-medium text-orange-600 bg-orange-50 px-2 py-1 rounded-full">
-          🔥 Em chamas!
+          🔥 On fire!
         </span>
       )}
     </Card>

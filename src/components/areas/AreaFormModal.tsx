@@ -24,14 +24,14 @@ const COLORS: { value: AreaColor; bg: string; ring: string }[] = [
 ];
 
 const ICONS: { value: AreaIcon; label: string; Icon: React.FC<{ className?: string }> }[] = [
-  { value: 'code',     label: 'Código',    Icon: Code2 },
-  { value: 'book',     label: 'Livro',     Icon: BookOpen },
-  { value: 'brain',    label: 'Cérebro',   Icon: Brain },
-  { value: 'flask',    label: 'Ciência',   Icon: FlaskConical },
-  { value: 'math',     label: 'Matemática',Icon: Calculator },
-  { value: 'language', label: 'Idioma',    Icon: Languages },
-  { value: 'music',    label: 'Música',    Icon: Music },
-  { value: 'art',      label: 'Arte',      Icon: Palette },
+  { value: 'code',     label: 'Code',     Icon: Code2 },
+  { value: 'book',     label: 'Book',     Icon: BookOpen },
+  { value: 'brain',    label: 'Brain',    Icon: Brain },
+  { value: 'flask',    label: 'Science',  Icon: FlaskConical },
+  { value: 'math',     label: 'Math',     Icon: Calculator },
+  { value: 'language', label: 'Language', Icon: Languages },
+  { value: 'music',    label: 'Music',    Icon: Music },
+  { value: 'art',      label: 'Art',      Icon: Palette },
 ];
 
 export function AreaFormModal({ initial, onSave, onClose }: Props) {
@@ -52,10 +52,9 @@ export function AreaFormModal({ initial, onSave, onClose }: Props) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40">
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-md">
-        {/* Header */}
         <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-gray-100">
           <h2 className="text-base font-semibold text-gray-800">
-            {initial ? 'Editar área' : 'Nova área'}
+            {initial ? 'Edit area' : 'New area'}
           </h2>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
             <X className="w-5 h-5" />
@@ -63,22 +62,20 @@ export function AreaFormModal({ initial, onSave, onClose }: Props) {
         </div>
 
         <form onSubmit={handleSubmit} className="px-6 py-5 space-y-5">
-          {/* Name */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Nome</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
             <input
               autoFocus
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="ex: Programação, Biologia..."
+              placeholder="e.g.: Programming, Biology..."
               className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm
                          focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
             />
           </div>
 
-          {/* Color */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Cor</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Color</label>
             <div className="flex gap-2 flex-wrap">
               {COLORS.map(({ value, bg, ring }) => (
                 <button
@@ -92,9 +89,8 @@ export function AreaFormModal({ initial, onSave, onClose }: Props) {
             </div>
           </div>
 
-          {/* Icon */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Ícone</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Icon</label>
             <div className="grid grid-cols-4 gap-2">
               {ICONS.map(({ value, label, Icon }) => (
                 <button
@@ -113,13 +109,12 @@ export function AreaFormModal({ initial, onSave, onClose }: Props) {
             </div>
           </div>
 
-          {/* Actions */}
           <div className="flex justify-end gap-2 pt-1">
             <Button type="button" variant="secondary" onClick={onClose}>
-              Cancelar
+              Cancel
             </Button>
             <Button type="submit" disabled={!name.trim() || saving}>
-              {saving ? 'Salvando…' : initial ? 'Salvar' : 'Criar área'}
+              {saving ? 'Saving...' : initial ? 'Save' : 'Create area'}
             </Button>
           </div>
         </form>

@@ -28,8 +28,8 @@ export function RescueAlert({ protocol }: RescueAlertProps) {
         <p className="font-semibold text-sm">{protocol.title}</p>
         <p className="text-sm mt-0.5 opacity-90">{protocol.description}</p>
         <p className="text-xs mt-1 opacity-75">
-          Duração recomendada: {protocol.recommendedDuration}
-          {protocol.areasToFocus === 1 ? ' · Foco em 1 área' : ''}
+          Recommended duration: {protocol.recommendedDuration}
+          {protocol.areasToFocus === 1 ? ' · Focus on 1 area' : ''}
         </p>
       </div>
       <button

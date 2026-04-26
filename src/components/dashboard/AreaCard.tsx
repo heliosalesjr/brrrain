@@ -49,7 +49,7 @@ export function AreaCard({ area, concepts, dueCards }: AreaCardProps) {
         {dueCards.length > 0 && (
           <Badge variant="warning" className="gap-1">
             <RotateCcw className="w-3 h-3" />
-            {dueCards.length} revisões
+            {dueCards.length} reviews
           </Badge>
         )}
       </div>
@@ -57,7 +57,7 @@ export function AreaCard({ area, concepts, dueCards }: AreaCardProps) {
       {/* Progress */}
       <div className="mb-3">
         <div className="flex justify-between text-xs text-gray-500 mb-1">
-          <span>{mastered}/{concepts.length} conceitos</span>
+          <span>{mastered}/{concepts.length} concepts</span>
           <span>{progress}%</span>
         </div>
         <ProgressBar value={progress} color={colors.bar} />
@@ -82,7 +82,7 @@ export function AreaCard({ area, concepts, dueCards }: AreaCardProps) {
         </div>
       ) : (
         <p className="text-xs text-gray-400 pt-3 border-t border-gray-50">
-          Todos os conceitos dominados
+          All concepts mastered
         </p>
       )}
     </Card>
