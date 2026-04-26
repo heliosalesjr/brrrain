@@ -2,6 +2,7 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { Dashboard } from '@/pages/Dashboard';
 import { Login } from '@/pages/Login';
+import { Areas } from '@/pages/Areas';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 
 const ComingSoon = ({ title }: { title: string }) => (
@@ -27,7 +28,7 @@ export const router = createBrowserRouter([
       { index: true, element: <Dashboard /> },
       { path: 'session/:id', element: <ComingSoon title="Sessão de Estudo" /> },
       { path: 'review', element: <ComingSoon title="Revisão de Flashcards" /> },
-      { path: 'areas', element: <ComingSoon title="Gerenciar Áreas" /> },
+      { path: 'areas', element: <Areas /> },
     ],
   },
   {
