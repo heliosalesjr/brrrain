@@ -5,14 +5,16 @@ import type { DailyAgendaItem } from '@/domain/types';
 import { getDueCards } from '@/domain/scheduler';
 
 export function useScheduler() {
-  const { areas, concepts, flashcards } = useAppStore();
+  const { areas, concepts, flashcards, activeAreaId } = useAppStore();
 
   const agendaItems = useMemo<DailyAgendaItem[]>(() => {
     const now = new Date();
     const today = startOfDay(now);
     const items: DailyAgendaItem[] = [];
 
-    const activeAreas = areas.filter((a) => a.isActive);
+    const activeAreas = areas
+      .filter((a) => a.isActive)
+      .filter((a) => !activeAreaId || a.id === activeAreaId);
 
     for (const area of activeAreas) {
       const areaConcepts = concepts.filter((c) => c.areaId === area.id);
@@ -57,8 +59,10 @@ export function useScheduler() {
 
   const dueReviewsToday = useMemo(() => {
     const now = new Date();
-    return flashcards.filter((c) => c.nextReviewAt <= now);
-  }, [flashcards]);
+    return flashcards.filter(
+      (c) => c.nextReviewAt <= now && (!activeAreaId || c.areaId === activeAreaId)
+    );
+  }, [flashcards, activeAreaId]);
 
   return { agendaItems, dueReviewsToday };
 }

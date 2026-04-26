@@ -22,9 +22,27 @@ const navItems = [
   { to: '/areas', icon: Layers, label: 'Áreas' },
 ];
 
+const areaColorMap: Record<string, string> = {
+  blue:   '#3b82f6',
+  green:  '#22c55e',
+  purple: '#a855f7',
+  orange: '#f97316',
+  red:    '#ef4444',
+  yellow: '#eab308',
+  teal:   '#14b8a6',
+  pink:   '#ec4899',
+};
+
 export function Sidebar({ collapsed, onToggle }: SidebarProps) {
-  const allAreas = useAppStore((s) => s.areas);
+  const allAreas    = useAppStore((s) => s.areas);
+  const activeAreaId = useAppStore((s) => s.activeAreaId);
+  const setActiveAreaId = useAppStore((s) => s.setActiveAreaId);
+
   const areas = allAreas.filter((a) => a.isActive);
+
+  const handleAreaClick = (id: string) => {
+    setActiveAreaId(activeAreaId === id ? null : id);
+  };
 
   return (
     <aside
@@ -42,7 +60,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-2 py-4 space-y-1">
+      <nav className="flex-1 px-2 py-4 space-y-1 overflow-y-auto">
         {navItems.map(({ to, icon: Icon, label }) => (
           <NavLink
             key={to}
@@ -62,24 +80,46 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
           </NavLink>
         ))}
 
-        {/* Active areas indicator */}
-        {!collapsed && areas.length > 0 && (
-          <div className="pt-4 mt-4 border-t border-gray-700">
-            <p className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-              Áreas ativas
-            </p>
-            {areas.slice(0, 5).map((area) => (
-              <div
-                key={area.id}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs text-gray-400"
-              >
-                <span
-                  className="w-2 h-2 rounded-full flex-shrink-0"
-                  style={{ backgroundColor: areaColorMap[area.color] }}
-                />
-                <span className="truncate">{area.name}</span>
-              </div>
-            ))}
+        {/* Active areas — selectable */}
+        {areas.length > 0 && (
+          <div className={`pt-4 mt-4 border-t border-gray-700 ${collapsed ? '' : ''}`}>
+            {!collapsed && (
+              <p className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                Áreas ativas
+              </p>
+            )}
+            {areas.slice(0, 8).map((area) => {
+              const color = areaColorMap[area.color] ?? '#6b7280';
+              const isSelected = activeAreaId === area.id;
+
+              return (
+                <button
+                  key={area.id}
+                  onClick={() => handleAreaClick(area.id)}
+                  title={area.name}
+                  className={`
+                    w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs
+                    transition-colors text-left
+                    ${isSelected
+                      ? 'bg-gray-700 text-white font-semibold'
+                      : 'text-gray-400 hover:bg-gray-800 hover:text-gray-200'}
+                  `}
+                >
+                  {/* Color dot — bigger + ring when selected */}
+                  <span
+                    className={`flex-shrink-0 rounded-full transition-all
+                      ${isSelected ? 'w-2.5 h-2.5 ring-2 ring-offset-1 ring-offset-gray-900' : 'w-2 h-2'}`}
+                    style={{ backgroundColor: color, ...(isSelected ? { ringColor: color } : {}) }}
+                  />
+                  {!collapsed && (
+                    <span className="truncate">{area.name}</span>
+                  )}
+                  {!collapsed && isSelected && (
+                    <span className="ml-auto text-gray-400 text-[10px] font-normal">ativa</span>
+                  )}
+                </button>
+              );
+            })}
           </div>
         )}
       </nav>
@@ -94,14 +134,3 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
     </aside>
   );
 }
-
-const areaColorMap: Record<string, string> = {
-  blue: '#3b82f6',
-  green: '#22c55e',
-  purple: '#a855f7',
-  orange: '#f97316',
-  red: '#ef4444',
-  yellow: '#eab308',
-  teal: '#14b8a6',
-  pink: '#ec4899',
-};

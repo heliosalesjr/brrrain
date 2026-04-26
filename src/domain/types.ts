@@ -63,6 +63,16 @@ export interface ReviewEvent {
   responseTime: number; // in milliseconds
 }
 
+export type LinkMediaType = 'video' | 'article' | 'pdf' | 'book' | 'audio' | 'course' | 'website';
+
+export interface StudyLink {
+  id: string;
+  areaId: string;
+  title: string;
+  url: string;
+  mediaType: LinkMediaType;
+}
+
 // Computed types for UI
 export interface DailyAgendaItem {
   areaId: string;

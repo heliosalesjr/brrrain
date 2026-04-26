@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { Area, Concept, Flashcard, Session } from '@/domain/types';
+import type { Area, Concept, Flashcard, Session, StudyLink } from '@/domain/types';
 
 interface ActiveSession {
   sessionId: string;
@@ -16,11 +16,19 @@ interface AppState {
   flashcards: Flashcard[];
   sessions: Session[];
 
+  // Study links
+  studyLinks: StudyLink[];
+  setStudyLinks: (links: StudyLink[]) => void;
+  addStudyLink: (link: StudyLink) => void;
+  removeStudyLink: (id: string) => void;
+
   // UI State
   loading: boolean;
   error: string | null;
   activeSession: ActiveSession | null;
   lastActivityAt: Date | null;
+  activeAreaId: string | null;
+  setActiveAreaId: (id: string | null) => void;
 
   // Actions — Areas
   setAreas: (areas: Area[]) => void;
@@ -56,10 +64,12 @@ export const useAppStore = create<AppState>((set) => ({
   concepts: [],
   flashcards: [],
   sessions: [],
+  studyLinks: [],
   loading: false,
   error: null,
   activeSession: null,
   lastActivityAt: null,
+  activeAreaId: null,
 
   setAreas: (areas) => set({ areas }),
   addArea: (area) => set((s) => ({ areas: [...s.areas, area] })),
@@ -91,8 +101,13 @@ export const useAppStore = create<AppState>((set) => ({
   setSessions: (sessions) => set({ sessions }),
   addSession: (session) => set((s) => ({ sessions: [...s.sessions, session] })),
 
+  setStudyLinks: (studyLinks) => set({ studyLinks }),
+  addStudyLink: (link) => set((s) => ({ studyLinks: [...s.studyLinks, link] })),
+  removeStudyLink: (id) => set((s) => ({ studyLinks: s.studyLinks.filter((l) => l.id !== id) })),
+
   setLoading: (loading) => set({ loading }),
   setError: (error) => set({ error }),
   setActiveSession: (activeSession) => set({ activeSession }),
   setLastActivityAt: (lastActivityAt) => set({ lastActivityAt }),
+  setActiveAreaId: (activeAreaId) => set({ activeAreaId }),
 }));

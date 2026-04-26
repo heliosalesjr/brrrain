@@ -4,7 +4,7 @@ import type {
   SnapshotOptions,
   Timestamp,
 } from 'firebase/firestore';
-import type { Area, Concept, Session, Flashcard } from '@/domain/types';
+import type { Area, Concept, Session, Flashcard, StudyLink } from '@/domain/types';
 
 function toDate(value: Timestamp | Date | null | undefined): Date | null {
   if (!value) return null;
@@ -91,6 +91,22 @@ export const sessionConverter: FirestoreDataConverter<Session> = {
       notes: data.notes ?? '',
       flashcardsCreated: data.flashcardsCreated ?? 0,
       duration: data.duration ?? 0,
+    };
+  },
+};
+
+export const linkConverter: FirestoreDataConverter<StudyLink> = {
+  toFirestore(link: StudyLink) {
+    return { areaId: link.areaId, title: link.title, url: link.url, mediaType: link.mediaType };
+  },
+  fromFirestore(snapshot: QueryDocumentSnapshot, options: SnapshotOptions): StudyLink {
+    const data = snapshot.data(options);
+    return {
+      id: snapshot.id,
+      areaId: data.areaId,
+      title: data.title,
+      url: data.url,
+      mediaType: data.mediaType ?? 'website',
     };
   },
 };

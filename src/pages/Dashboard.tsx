@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 import { Info } from 'lucide-react';
 import { DailyAgenda } from '@/components/dashboard/DailyAgenda';
-import { AreaCard } from '@/components/dashboard/AreaCard';
 import { ReviewQueue } from '@/components/dashboard/ReviewQueue';
 import { StreakWidget } from '@/components/dashboard/StreakWidget';
 import { RescueAlert } from '@/components/dashboard/RescueAlert';
+import { StudyLinksPanel } from '@/components/dashboard/StudyLinksPanel';
 import { useAreas } from '@/hooks/useAreas';
 import { useConcepts } from '@/hooks/useConcepts';
 import { useFlashcards } from '@/hooks/useFlashcards';
@@ -15,14 +15,14 @@ import { isConfigured } from '@/firebase/config';
 import { MOCK_AREAS, MOCK_CONCEPTS, MOCK_SESSIONS } from '@/mock/data';
 
 export function Dashboard() {
-  const { areas } = useAreas();
-  const { concepts } = useConcepts();
+  useAreas();
+  useConcepts();
   const { dueCards } = useFlashcards();
   const { agendaItems, dueReviewsToday } = useScheduler();
   const rescue = useRescue();
-  const { setAreas, setConcepts, setSessions } = useAppStore();
+  const { setAreas, setConcepts, setSessions, activeAreaId } = useAppStore();
+  const areas = useAppStore((s) => s.areas);
 
-  // Load mock data when Firebase is not configured
   useEffect(() => {
     if (!isConfigured && areas.length === 0) {
       setAreas(MOCK_AREAS);
@@ -30,6 +30,10 @@ export function Dashboard() {
       setSessions(MOCK_SESSIONS);
     }
   }, [isConfigured, areas.length, setAreas, setConcepts, setSessions]);
+
+  const filteredDueCards = activeAreaId
+    ? dueCards.filter((c) => c.areaId === activeAreaId)
+    : dueCards;
 
   return (
     <div className="max-w-5xl mx-auto space-y-6">
@@ -40,14 +44,15 @@ export function Dashboard() {
           <div>
             <p className="text-sm font-semibold">Firebase não configurado</p>
             <p className="text-sm opacity-90">
-              Exibindo dados demonstrativos. Copie <code className="bg-blue-100 px-1 rounded">.env.example</code> para{' '}
+              Exibindo dados demonstrativos. Copie{' '}
+              <code className="bg-blue-100 px-1 rounded">.env.example</code> para{' '}
               <code className="bg-blue-100 px-1 rounded">.env</code> e preencha com suas credenciais Firebase.
             </p>
           </div>
         </div>
       )}
 
-      {/* Rescue alert (sticky at top) */}
+      {/* Rescue alert */}
       {rescue && <RescueAlert protocol={rescue} />}
 
       {/* Stats row */}
@@ -83,27 +88,13 @@ export function Dashboard() {
 
           <section>
             <h2 className="text-base font-semibold text-gray-700 mb-3">Fila de revisão</h2>
-            <ReviewQueue dueCards={dueReviewsToday} areas={areas} />
+            <ReviewQueue dueCards={filteredDueCards} areas={areas} />
           </section>
         </div>
 
-        {/* Right: Area cards */}
-        <div className="space-y-4">
-          <h2 className="text-base font-semibold text-gray-700">Suas áreas</h2>
-          {areas.filter((a) => a.isActive).length === 0 ? (
-            <p className="text-sm text-gray-400">Nenhuma área ativa.</p>
-          ) : (
-            areas
-              .filter((a) => a.isActive)
-              .map((area) => (
-                <AreaCard
-                  key={area.id}
-                  area={area}
-                  concepts={concepts.filter((c) => c.areaId === area.id)}
-                  dueCards={dueCards.filter((c) => c.areaId === area.id)}
-                />
-              ))
-          )}
+        {/* Right: Study links */}
+        <div>
+          <StudyLinksPanel areaId={activeAreaId} />
         </div>
       </div>
     </div>
