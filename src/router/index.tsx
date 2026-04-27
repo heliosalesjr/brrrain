@@ -4,6 +4,7 @@ import { Dashboard } from '@/pages/Dashboard';
 import { Login } from '@/pages/Login';
 import { Areas } from '@/pages/Areas';
 import { Session } from '@/pages/Session';
+import { Review } from '@/pages/Review';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 
 const ComingSoon = ({ title }: { title: string }) => (
@@ -28,7 +29,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <Dashboard /> },
       { path: 'session/:id', element: <Session /> },
-      { path: 'review', element: <ComingSoon title="Flashcard Review" /> },
+      { path: 'review', element: <Review /> },
       { path: 'areas', element: <Areas /> },
     ],
   },

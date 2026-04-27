@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { RotateCcw, ChevronRight } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { Card } from '@/components/ui/Card';
@@ -11,6 +12,7 @@ interface ReviewQueueProps {
 }
 
 export function ReviewQueue({ dueCards, areas }: ReviewQueueProps) {
+  const navigate = useNavigate();
   if (dueCards.length === 0) {
     return (
       <Card className="p-6 text-center">
@@ -34,7 +36,7 @@ export function ReviewQueue({ dueCards, areas }: ReviewQueueProps) {
           <h3 className="font-semibold text-gray-800 text-sm">Pending reviews</h3>
           <Badge variant="danger">{dueCards.length}</Badge>
         </div>
-        <Button variant="primary" size="sm">
+        <Button variant="primary" size="sm" onClick={() => navigate('/review')}>
           Start review
           <ChevronRight className="w-3 h-3" />
         </Button>
