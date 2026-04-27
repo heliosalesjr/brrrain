@@ -40,17 +40,24 @@ export function useConcepts(areaId?: string) {
     areaId: string;
     title: string;
     description?: string;
+    status?: ConceptStatus;
   }) => {
     const col = conceptsCollection();
+
+    const status = input.status ?? 'new';
+    const nextSessionAt =
+      status === 'mastered' ? addDays(new Date(), 30)
+      : status === 'reviewing' ? addDays(new Date(), 3)
+      : addDays(new Date(), 1);
 
     const concept: Concept = {
       id: `local-${Date.now()}`,
       areaId: input.areaId,
       title: input.title,
       description: input.description ?? '',
-      status: 'new',
+      status,
       lastStudiedAt: null,
-      nextSessionAt: addDays(new Date(), 1),
+      nextSessionAt,
     };
 
     if (!col) {

@@ -2,12 +2,13 @@ import { useState } from 'react';
 import {
   Plus, ChevronDown, ChevronUp, Pencil, Trash2,
   EyeOff, Eye, Code2, BookOpen, Brain, FlaskConical,
-  Calculator, Languages, Music, Palette,
+  Calculator, Languages, Music, Palette, FileDown,
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { AreaFormModal } from '@/components/areas/AreaFormModal';
 import { ConceptFormModal } from '@/components/areas/ConceptFormModal';
+import { ImportConceptsModal } from '@/components/areas/ImportConceptsModal';
 import { useAreas } from '@/hooks/useAreas';
 import { useConcepts } from '@/hooks/useConcepts';
 import type { Area, AreaColor, AreaIcon, ConceptStatus } from '@/domain/types';
@@ -48,6 +49,7 @@ export function Areas() {
   const [expanded, setExpanded]         = useState<Set<string>>(new Set());
   const [areaModal, setAreaModal]       = useState<'new' | Area | null>(null);
   const [conceptModal, setConceptModal] = useState<string | null>(null);
+  const [importModal, setImportModal]   = useState<Area | null>(null);
   const [deletingArea, setDeletingArea] = useState<string | null>(null);
 
   const toggleExpanded = (id: string) =>
@@ -69,6 +71,15 @@ export function Areas() {
     setDeletingArea(id);
     await deleteArea(id);
     setDeletingArea(null);
+  };
+
+  const handleBatchImport = async (
+    areaId: string,
+    items: { title: string; description?: string; status?: ConceptStatus }[]
+  ) => {
+    for (const item of items) {
+      await createConcept({ areaId, ...item });
+    }
   };
 
   return (
@@ -126,6 +137,13 @@ export function Areas() {
                   className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
                 >
                   {area.isActive ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+                <button
+                  title="Import concepts"
+                  onClick={() => setImportModal(area)}
+                  className="p-1.5 rounded-lg text-gray-400 hover:text-brand-600 hover:bg-brand-50 transition-colors"
+                >
+                  <FileDown className="w-4 h-4" />
                 </button>
                 <button
                   title="Edit area"
@@ -210,6 +228,15 @@ export function Areas() {
           areaId={conceptModal}
           onSave={createConcept}
           onClose={() => setConceptModal(null)}
+        />
+      )}
+
+      {importModal !== null && (
+        <ImportConceptsModal
+          areaId={importModal.id}
+          areaName={importModal.name}
+          onImport={(items) => handleBatchImport(importModal.id, items)}
+          onClose={() => setImportModal(null)}
         />
       )}
     </div>

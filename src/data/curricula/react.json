@@ -1,0 +1,132 @@
+[
+  {
+    "title": "JSX & rendering model",
+    "description": "How React transforms JSX into DOM elements — reconciliation mental model — article · 20 min",
+    "status": "mastered"
+  },
+  {
+    "title": "Props & component composition",
+    "description": "Data flow, children prop, component patterns — article · 20 min",
+    "status": "mastered"
+  },
+  {
+    "title": "useState",
+    "description": "Local state, batching, functional updates — review · 15 min",
+    "status": "mastered"
+  },
+  {
+    "title": "useEffect",
+    "description": "Side effects, dependency array, cleanup functions — review · 25 min",
+    "status": "mastered"
+  },
+  {
+    "title": "Event handling",
+    "description": "SyntheticEvents, handlers, controlled forms — review · 15 min",
+    "status": "mastered"
+  },
+  {
+    "title": "Conditional rendering",
+    "description": "Short-circuit, ternary, early returns — review · 10 min",
+    "status": "mastered"
+  },
+  {
+    "title": "Lists & keys",
+    "description": "Rendering arrays, key reconciliation algorithm — review · 15 min",
+    "status": "mastered"
+  },
+  {
+    "title": "useRef",
+    "description": "DOM refs and mutable values that don't trigger re-renders — video · 30 min",
+    "status": "learning"
+  },
+  {
+    "title": "useCallback",
+    "description": "Stable function references across renders, when to use vs not — video · 30 min",
+    "status": "learning"
+  },
+  {
+    "title": "useMemo",
+    "description": "Memoizing expensive computations — video · 25 min",
+    "status": "learning"
+  },
+  {
+    "title": "React.memo",
+    "description": "Component memoization with shallow prop comparison — article · 20 min",
+    "status": "learning"
+  },
+  {
+    "title": "Context API + useContext",
+    "description": "Global state without libraries, performance gotchas — video · 45 min",
+    "status": "learning"
+  },
+  {
+    "title": "Custom hooks",
+    "description": "Extracting and sharing stateful logic into reusable functions — video · 45 min",
+    "status": "learning"
+  },
+  {
+    "title": "Error boundaries",
+    "description": "Catching render errors and displaying fallback UI — article · 20 min",
+    "status": "learning"
+  },
+  {
+    "title": "Code splitting + React.lazy",
+    "description": "Dynamic imports and route-based splitting — article · 30 min",
+    "status": "learning"
+  },
+  {
+    "title": "Suspense",
+    "description": "Async rendering model and data fetching integration — video · 40 min",
+    "status": "learning"
+  },
+  {
+    "title": "useReducer",
+    "description": "Complex state machines and dispatch pattern — video · 45 min",
+    "status": "new"
+  },
+  {
+    "title": "useTransition",
+    "description": "Non-blocking UI updates, isPending flag — video · 35 min",
+    "status": "new"
+  },
+  {
+    "title": "useDeferredValue",
+    "description": "Deferring expensive re-renders to keep UI responsive — article · 25 min",
+    "status": "new"
+  },
+  {
+    "title": "useId",
+    "description": "Stable unique IDs for accessibility attributes — article · 15 min",
+    "status": "new"
+  },
+  {
+    "title": "Portals",
+    "description": "Rendering outside the parent DOM tree — article · 20 min",
+    "status": "new"
+  },
+  {
+    "title": "React Server Components",
+    "description": "Server-side rendering without hydration — video · 60 min",
+    "status": "new"
+  },
+  {
+    "title": "Server Actions",
+    "description": "Mutations from server in Next.js App Router — video · 45 min",
+    "status": "new"
+  },
+  {
+    "title": "useOptimistic",
+    "description": "Optimistic UI updates pattern — React 19 — video · 30 min",
+    "status": "new"
+  },
+  {
+    "title": "use() hook",
+    "description": "Promise unwrapping and Context reading — React 19 — article · 25 min",
+    "status": "new"
+  },
+  {
+    "title": "Concurrent rendering model",
+    "description": "Fiber architecture, scheduling, and concurrent features — video · 60 min",
+    "status": "new"
+  }
+]
