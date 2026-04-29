@@ -5,16 +5,18 @@ import { useAppStore } from '@/store/useAppStore';
 import type { Session, SessionType } from '@/domain/types';
 
 export function useSessions() {
-  const { setSessions, addSession } = useAppStore();
+  const { addSession } = useAppStore();
 
   useEffect(() => {
     const col = sessionsCollection();
     if (!col) return;
-    const unsubscribe = onSnapshot(col, (snapshot) => {
-      setSessions(snapshot.docs.map((d) => d.data()));
+    // Use getState() inside the callback so we don't depend on the extracted
+    // action reference, which could vary across renders in Zustand v5.
+    return onSnapshot(col, (snapshot) => {
+      useAppStore.getState().setSessions(snapshot.docs.map((d) => d.data()));
     });
-    return unsubscribe;
-  }, [setSessions]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const saveSession = async (input: {
     areaId: string;

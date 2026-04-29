@@ -190,7 +190,7 @@ function DroppableColumn({
 
 export function Concepts() {
   const { areas, createArea, editArea, toggleArea, deleteArea } = useAreas();
-  const { concepts, createConcept, reorderConcepts }            = useConcepts();
+  const { concepts, createConcept, reorderConcepts, updateConceptStatus } = useConcepts();
   useSessions();
   useFlashcards();
 
@@ -413,12 +413,13 @@ export function Concepts() {
                         </Badge>
                       </div>
 
-                      {/* Cards */}
-                      <SortableContext
-                        items={colConcepts.map((c) => c.id)}
-                        strategy={verticalListSortingStrategy}
-                      >
-                        <DroppableColumn status={col.status} emptyBorder={col.emptyBorder}>
+                      {/* Cards — DroppableColumn is the outer target so empty
+                          columns are still reachable by the collision detector */}
+                      <DroppableColumn status={col.status} emptyBorder={col.emptyBorder}>
+                        <SortableContext
+                          items={colConcepts.map((c) => c.id)}
+                          strategy={verticalListSortingStrategy}
+                        >
                           {colConcepts.map((concept) => {
                             const cardCount = flashcards.filter(
                               (f) => f.conceptId === concept.id
@@ -433,8 +434,8 @@ export function Concepts() {
                               />
                             );
                           })}
-                        </DroppableColumn>
-                      </SortableContext>
+                        </SortableContext>
+                      </DroppableColumn>
 
                       {/* Add concept (New column only) */}
                       {col.status === 'new' && (
@@ -501,6 +502,7 @@ export function Concepts() {
           concept={detailConcept}
           area={detailArea}
           onClose={() => setDetailConcept(null)}
+          onStatusChange={updateConceptStatus}
         />
       )}
     </div>

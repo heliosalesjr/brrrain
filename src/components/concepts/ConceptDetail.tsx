@@ -1,16 +1,17 @@
+import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { X, ChevronRight, BookOpen, Clock, Layers } from 'lucide-react';
 import { format, isToday, isYesterday } from 'date-fns';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { useAppStore } from '@/store/useAppStore';
-import { useConcepts } from '@/hooks/useConcepts';
 import type { Concept, Area, ConceptStatus } from '@/domain/types';
 
 interface Props {
   concept: Concept;
   area: Area | undefined;
   onClose: () => void;
+  onStatusChange: (id: string, status: ConceptStatus) => void;
 }
 
 const STATUS_OPTIONS: { value: ConceptStatus; label: string }[] = [
@@ -33,17 +34,25 @@ function sessionDateLabel(date: Date): string {
   return format(date, 'MMM d, yyyy');
 }
 
-export function ConceptDetail({ concept, area, onClose }: Props) {
+export function ConceptDetail({ concept, area, onClose, onStatusChange }: Props) {
   const navigate = useNavigate();
-  const { updateConceptStatus } = useConcepts();
 
-  const flashcards = useAppStore((s) =>
-    s.flashcards.filter((f) => f.conceptId === concept.id)
+  // Stable references — useMemo prevents new arrays on every render,
+  // avoiding Zustand's Object.is comparison triggering infinite re-renders.
+  const allFlashcards = useAppStore((s) => s.flashcards);
+  const allSessions   = useAppStore((s) => s.sessions);
+
+  const flashcards = useMemo(
+    () => allFlashcards.filter((f) => f.conceptId === concept.id),
+    [allFlashcards, concept.id]
   );
-  const sessions = useAppStore((s) =>
-    s.sessions
-      .filter((s) => s.conceptId === concept.id)
-      .sort((a, b) => b.date.getTime() - a.date.getTime())
+
+  const sessions = useMemo(
+    () =>
+      allSessions
+        .filter((s) => s.conceptId === concept.id)
+        .sort((a, b) => b.date.getTime() - a.date.getTime()),
+    [allSessions, concept.id]
   );
 
   const { label, variant } = STATUS_BADGE[concept.status];
@@ -51,10 +60,7 @@ export function ConceptDetail({ concept, area, onClose }: Props) {
   return (
     <>
       {/* Backdrop */}
-      <div
-        className="fixed inset-0 z-30 bg-black/20"
-        onClick={onClose}
-      />
+      <div className="fixed inset-0 z-30 bg-black/20" onClick={onClose} />
 
       {/* Panel */}
       <div className="fixed inset-y-0 right-0 z-40 w-full max-w-sm bg-white shadow-2xl flex flex-col">
@@ -83,7 +89,6 @@ export function ConceptDetail({ concept, area, onClose }: Props) {
         {/* Scrollable body */}
         <div className="flex-1 overflow-y-auto px-5 py-5 space-y-6">
 
-          {/* Description */}
           {concept.description && (
             <p className="text-sm text-gray-600 leading-relaxed">{concept.description}</p>
           )}
@@ -98,7 +103,7 @@ export function ConceptDetail({ concept, area, onClose }: Props) {
                 <button
                   key={opt.value}
                   onClick={() => {
-                    if (opt.value !== concept.status) updateConceptStatus(concept.id, opt.value);
+                    if (opt.value !== concept.status) onStatusChange(concept.id, opt.value);
                   }}
                   className={`px-3 py-1 rounded-full text-xs font-medium transition-all border
                     ${concept.status === opt.value
