@@ -50,6 +50,7 @@ export const conceptConverter: FirestoreDataConverter<Concept> = {
       status: concept.status,
       lastStudiedAt: concept.lastStudiedAt,
       nextSessionAt: concept.nextSessionAt,
+      sortOrder: concept.sortOrder,
     };
   },
   fromFirestore(snapshot: QueryDocumentSnapshot, options: SnapshotOptions): Concept {
@@ -62,6 +63,7 @@ export const conceptConverter: FirestoreDataConverter<Concept> = {
       status: data.status ?? 'new',
       lastStudiedAt: toDate(data.lastStudiedAt),
       nextSessionAt: toDate(data.nextSessionAt),
+      sortOrder: data.sortOrder ?? 0,
     };
   },
 };

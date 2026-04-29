@@ -1,8 +1,25 @@
 import { useState, useEffect } from 'react';
 import {
+  DndContext,
+  DragOverlay,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  closestCorners,
+} from '@dnd-kit/core';
+import type { DragEndEvent } from '@dnd-kit/core';
+import {
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+  arrayMove,
+} from '@dnd-kit/sortable';
+import { useDroppable } from '@dnd-kit/core';
+import { CSS } from '@dnd-kit/utilities';
+import {
   Plus, Pencil, Trash2, EyeOff, Eye, FileDown,
   Code2, BookOpen, Brain, FlaskConical, Calculator,
-  Languages, Music, Palette,
+  Languages, Music, Palette, GripVertical,
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
@@ -45,11 +62,12 @@ const STATUS_COLUMNS: {
   headerBg: string;
   headerText: string;
   dot: string;
+  emptyBorder: string;
 }[] = [
-  { status: 'new',       label: 'New',       headerBg: 'bg-gray-50',   headerText: 'text-gray-600',  dot: 'bg-gray-400' },
-  { status: 'learning',  label: 'Learning',  headerBg: 'bg-blue-50',   headerText: 'text-blue-700',  dot: 'bg-blue-500' },
-  { status: 'reviewing', label: 'Reviewing', headerBg: 'bg-amber-50',  headerText: 'text-amber-700', dot: 'bg-amber-500' },
-  { status: 'mastered',  label: 'Mastered',  headerBg: 'bg-green-50',  headerText: 'text-green-700', dot: 'bg-green-500' },
+  { status: 'new',       label: 'New',       headerBg: 'bg-gray-50',  headerText: 'text-gray-600',  dot: 'bg-gray-400',   emptyBorder: 'border-gray-200' },
+  { status: 'learning',  label: 'Learning',  headerBg: 'bg-blue-50',  headerText: 'text-blue-700',  dot: 'bg-blue-500',   emptyBorder: 'border-blue-200' },
+  { status: 'reviewing', label: 'Reviewing', headerBg: 'bg-amber-50', headerText: 'text-amber-700', dot: 'bg-amber-500',  emptyBorder: 'border-amber-200' },
+  { status: 'mastered',  label: 'Mastered',  headerBg: 'bg-green-50', headerText: 'text-green-700', dot: 'bg-green-500',  emptyBorder: 'border-green-200' },
 ];
 
 const STATUS_BADGE_VARIANT: Record<ConceptStatus, 'default' | 'info' | 'warning' | 'success'> = {
@@ -59,25 +77,45 @@ const STATUS_BADGE_VARIANT: Record<ConceptStatus, 'default' | 'info' | 'warning'
   mastered:  'success',
 };
 
-function ConceptCard({
-  concept,
-  flashcardCount,
-  dot,
-  onClick,
-}: {
+// ─── Card components ────────────────────────────────────────────────────────
+
+interface CardProps {
   concept: Concept;
   flashcardCount: number;
   dot: string;
   onClick: () => void;
-}) {
+  isDragOverlay?: boolean;
+  dragHandleProps?: React.HTMLAttributes<HTMLDivElement>;
+  dragHandleRef?: (el: HTMLElement | null) => void;
+}
+
+function ConceptCard({
+  concept, flashcardCount, dot, onClick,
+  isDragOverlay, dragHandleProps, dragHandleRef,
+}: CardProps) {
   return (
     <div
-      onClick={onClick}
-      className="bg-white rounded-xl border border-gray-100 px-3 py-2.5 cursor-pointer
-                 hover:border-brand-200 hover:shadow-sm transition-all group"
+      className={`bg-white rounded-xl border px-3 py-2.5 group
+        ${isDragOverlay
+          ? 'border-brand-300 shadow-xl rotate-1 cursor-grabbing'
+          : 'border-gray-100 hover:border-brand-200 hover:shadow-sm cursor-pointer transition-all'
+        }`}
+      onClick={!isDragOverlay ? onClick : undefined}
     >
       <div className="flex items-start gap-2">
+        {/* Drag handle */}
+        <div
+          ref={dragHandleRef}
+          {...dragHandleProps}
+          className="mt-1 text-gray-200 hover:text-gray-400 transition-colors cursor-grab flex-shrink-0
+                     opacity-0 group-hover:opacity-100"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <GripVertical className="w-3.5 h-3.5" />
+        </div>
+
         <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 mt-1.5 ${dot}`} />
+
         <div className="flex-1 min-w-0">
           <p className="text-sm font-medium text-gray-800 leading-snug group-hover:text-brand-700 transition-colors">
             {concept.title}
@@ -96,9 +134,63 @@ function ConceptCard({
   );
 }
 
+function SortableCard(props: Omit<CardProps, 'dragHandleProps' | 'dragHandleRef'>) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    setActivatorNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: props.concept.id });
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={{
+        transform: CSS.Transform.toString(transform),
+        transition,
+        opacity: isDragging ? 0.3 : 1,
+      }}
+    >
+      <ConceptCard
+        {...props}
+        dragHandleRef={setActivatorNodeRef}
+        dragHandleProps={{ ...attributes, ...listeners }}
+      />
+    </div>
+  );
+}
+
+// ─── Droppable column body ────────────────────────────────────────────────────
+
+function DroppableColumn({
+  status,
+  children,
+  emptyBorder,
+}: {
+  status: ConceptStatus;
+  children: React.ReactNode;
+  emptyBorder: string;
+}) {
+  const { setNodeRef, isOver } = useDroppable({ id: `col:${status}` });
+  return (
+    <div
+      ref={setNodeRef}
+      className={`flex-1 space-y-2 min-h-[80px] rounded-xl transition-colors
+        ${isOver ? `border-2 border-dashed ${emptyBorder} bg-gray-50/60` : ''}`}
+    >
+      {children}
+    </div>
+  );
+}
+
+// ─── Main page ────────────────────────────────────────────────────────────────
+
 export function Concepts() {
   const { areas, createArea, editArea, toggleArea, deleteArea } = useAreas();
-  const { concepts, createConcept }              = useConcepts();
+  const { concepts, createConcept, reorderConcepts }            = useConcepts();
   useSessions();
   useFlashcards();
 
@@ -112,17 +204,73 @@ export function Concepts() {
   const [importModal, setImportModal]       = useState<Area | null>(null);
   const [deletingArea, setDeletingArea]     = useState<string | null>(null);
   const [detailConcept, setDetailConcept]   = useState<Concept | null>(null);
+  const [activeCard, setActiveCard]         = useState<Concept | null>(null);
 
-  // Auto-select first active area
   useEffect(() => {
     if (!selectedAreaId && activeAreas.length > 0) {
       setSelectedAreaId(activeAreas[0].id);
     }
   }, [activeAreas, selectedAreaId]);
 
-  const selectedArea = areas.find((a) => a.id === selectedAreaId);
+  const selectedArea  = areas.find((a) => a.id === selectedAreaId);
+  const areaConcepts  = concepts.filter((c) => c.areaId === selectedAreaId);
 
-  const areaConcepts = concepts.filter((c) => c.areaId === selectedAreaId);
+  // Sort each status column by sortOrder
+  const sortedByStatus = (status: ConceptStatus) =>
+    areaConcepts
+      .filter((c) => c.status === status)
+      .sort((a, b) => a.sortOrder - b.sortOrder);
+
+  // DnD sensors — require 8px movement so clicks still fire
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
+  );
+
+  const handleDragStart = ({ active }: { active: { id: string | number } }) => {
+    const card = areaConcepts.find((c) => c.id === active.id);
+    setActiveCard(card ?? null);
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    setActiveCard(null);
+    const { active, over } = event;
+    if (!over) return;
+
+    const activeId = active.id as string;
+    const overId   = over.id as string;
+    if (activeId === overId) return;
+
+    const draggedConcept = areaConcepts.find((c) => c.id === activeId);
+    if (!draggedConcept) return;
+
+    // Determine target status — over can be a col sentinel (col:STATUS) or a concept ID
+    const overColMatch = overId.match(/^col:(.+)$/);
+    const targetStatus: ConceptStatus = overColMatch
+      ? (overColMatch[1] as ConceptStatus)
+      : (areaConcepts.find((c) => c.id === overId)?.status ?? draggedConcept.status);
+
+    if (targetStatus !== draggedConcept.status) {
+      // ── Cross-column move: change status, append to end of target column ──
+      const targetCol = sortedByStatus(targetStatus);
+      const newSortOrder = targetCol.length; // goes to the bottom
+
+      reorderConcepts([{
+        id: activeId,
+        sortOrder: newSortOrder,
+        status: targetStatus,
+      }]);
+    } else {
+      // ── Same-column reorder ──
+      const col        = sortedByStatus(draggedConcept.status);
+      const oldIndex   = col.findIndex((c) => c.id === activeId);
+      const newIndex   = col.findIndex((c) => c.id === overId);
+      if (oldIndex === -1 || newIndex === -1 || oldIndex === newIndex) return;
+
+      const reordered = arrayMove(col, oldIndex, newIndex);
+      const updates   = reordered.map((c, i) => ({ id: c.id, sortOrder: i }));
+      reorderConcepts(updates);
+    }
+  };
 
   const handleSaveArea = async (data: { name: string; color: AreaColor; icon: AreaIcon }) => {
     if (areaModal === 'new') {
@@ -152,13 +300,16 @@ export function Concepts() {
     }
   };
 
-  const detailArea = detailConcept
-    ? areas.find((a) => a.id === detailConcept.areaId)
-    : undefined;
+  const detailArea = detailConcept ? areas.find((a) => a.id === detailConcept.areaId) : undefined;
+
+  // Find the overlay card's column config for the DragOverlay
+  const activeColConfig = activeCard
+    ? STATUS_COLUMNS.find((c) => c.status === activeCard.status)
+    : null;
 
   return (
     <div className="space-y-5">
-      {/* Page header */}
+      {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-bold text-gray-900">Concepts</h1>
         <Button onClick={() => setAreaModal('new')}>
@@ -167,7 +318,6 @@ export function Concepts() {
         </Button>
       </div>
 
-      {/* Area tabs */}
       {activeAreas.length === 0 ? (
         <div className="text-center py-16 text-gray-400">
           <BookOpen className="w-10 h-10 mx-auto mb-3 opacity-30" />
@@ -175,10 +325,11 @@ export function Concepts() {
         </div>
       ) : (
         <>
+          {/* Area tabs */}
           <div className="flex items-center gap-2 flex-wrap">
             {activeAreas.map((area) => {
-              const colors = COLOR_MAP[area.color] ?? COLOR_MAP.blue;
-              const Icon   = ICON_MAP[area.icon] ?? BookOpen;
+              const colors   = COLOR_MAP[area.color] ?? COLOR_MAP.blue;
+              const Icon     = ICON_MAP[area.icon] ?? BookOpen;
               const isSelected = selectedAreaId === area.id;
               return (
                 <button
@@ -199,13 +350,6 @@ export function Concepts() {
                 </button>
               );
             })}
-
-            {/* Archived areas toggle */}
-            {areas.filter((a) => !a.isActive).length > 0 && (
-              <span className="text-xs text-gray-400 ml-1">
-                {areas.filter((a) => !a.isActive).length} archived
-              </span>
-            )}
           </div>
 
           {/* Area action bar */}
@@ -246,57 +390,82 @@ export function Concepts() {
             </div>
           )}
 
-          {/* Kanban columns */}
+          {/* Kanban */}
           {selectedArea && (
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              {STATUS_COLUMNS.map((col) => {
-                const colConcepts = areaConcepts.filter((c) => c.status === col.status);
-                return (
-                  <div key={col.status} className="flex flex-col gap-2 min-h-[200px]">
-                    {/* Column header */}
-                    <div className={`flex items-center justify-between px-3 py-2 rounded-xl ${col.headerBg}`}>
-                      <span className={`text-xs font-semibold ${col.headerText}`}>
-                        {col.label}
-                      </span>
-                      <Badge variant={STATUS_BADGE_VARIANT[col.status]}>
-                        {colConcepts.length}
-                      </Badge>
-                    </div>
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCorners}
+              onDragStart={handleDragStart}
+              onDragEnd={handleDragEnd}
+            >
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                {STATUS_COLUMNS.map((col) => {
+                  const colConcepts = sortedByStatus(col.status);
+                  return (
+                    <div key={col.status} className="flex flex-col gap-2">
+                      {/* Column header */}
+                      <div className={`flex items-center justify-between px-3 py-2 rounded-xl ${col.headerBg}`}>
+                        <span className={`text-xs font-semibold ${col.headerText}`}>
+                          {col.label}
+                        </span>
+                        <Badge variant={STATUS_BADGE_VARIANT[col.status]}>
+                          {colConcepts.length}
+                        </Badge>
+                      </div>
 
-                    {/* Concept cards */}
-                    <div className="flex-1 space-y-2">
-                      {colConcepts.map((concept) => {
-                        const cardCount = flashcards.filter(
-                          (f) => f.conceptId === concept.id
-                        ).length;
-                        return (
-                          <ConceptCard
-                            key={concept.id}
-                            concept={concept}
-                            flashcardCount={cardCount}
-                            dot={col.dot}
-                            onClick={() => setDetailConcept(concept)}
-                          />
-                        );
-                      })}
-                    </div>
-
-                    {/* Add concept (New column only) */}
-                    {col.status === 'new' && (
-                      <button
-                        onClick={() => setConceptModal(selectedArea.id)}
-                        className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs text-gray-400
-                                   hover:text-brand-600 hover:bg-brand-50 border border-dashed border-gray-200
-                                   hover:border-brand-300 transition-all"
+                      {/* Cards */}
+                      <SortableContext
+                        items={colConcepts.map((c) => c.id)}
+                        strategy={verticalListSortingStrategy}
                       >
-                        <Plus className="w-3.5 h-3.5" />
-                        Add concept
-                      </button>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
+                        <DroppableColumn status={col.status} emptyBorder={col.emptyBorder}>
+                          {colConcepts.map((concept) => {
+                            const cardCount = flashcards.filter(
+                              (f) => f.conceptId === concept.id
+                            ).length;
+                            return (
+                              <SortableCard
+                                key={concept.id}
+                                concept={concept}
+                                flashcardCount={cardCount}
+                                dot={col.dot}
+                                onClick={() => setDetailConcept(concept)}
+                              />
+                            );
+                          })}
+                        </DroppableColumn>
+                      </SortableContext>
+
+                      {/* Add concept (New column only) */}
+                      {col.status === 'new' && (
+                        <button
+                          onClick={() => setConceptModal(selectedArea.id)}
+                          className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs text-gray-400
+                                     hover:text-brand-600 hover:bg-brand-50 border border-dashed border-gray-200
+                                     hover:border-brand-300 transition-all"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                          Add concept
+                        </button>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Ghost card that follows the cursor while dragging */}
+              <DragOverlay>
+                {activeCard && activeColConfig ? (
+                  <ConceptCard
+                    concept={activeCard}
+                    flashcardCount={flashcards.filter((f) => f.conceptId === activeCard.id).length}
+                    dot={activeColConfig.dot}
+                    onClick={() => {}}
+                    isDragOverlay
+                  />
+                ) : null}
+              </DragOverlay>
+            </DndContext>
           )}
         </>
       )}
@@ -327,7 +496,6 @@ export function Concepts() {
         />
       )}
 
-      {/* Concept detail drawer */}
       {detailConcept !== null && (
         <ConceptDetail
           concept={detailConcept}

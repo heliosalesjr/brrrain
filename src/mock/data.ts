@@ -31,7 +31,6 @@ export const MOCK_AREAS: Area[] = [
 ];
 
 export const MOCK_CONCEPTS: Concept[] = [
-  // Programming
   {
     id: 'concept-1',
     areaId: 'area-1',
@@ -40,6 +39,7 @@ export const MOCK_CONCEPTS: Concept[] = [
     status: 'learning',
     lastStudiedAt: subDays(today, 2),
     nextSessionAt: today,
+    sortOrder: 0,
   },
   {
     id: 'concept-2',
@@ -49,6 +49,7 @@ export const MOCK_CONCEPTS: Concept[] = [
     status: 'reviewing',
     lastStudiedAt: subDays(today, 5),
     nextSessionAt: subDays(today, 1),
+    sortOrder: 0,
   },
   {
     id: 'concept-3',
@@ -58,8 +59,8 @@ export const MOCK_CONCEPTS: Concept[] = [
     status: 'mastered',
     lastStudiedAt: subDays(today, 10),
     nextSessionAt: addDays(today, 20),
+    sortOrder: 0,
   },
-  // Neuroscience
   {
     id: 'concept-4',
     areaId: 'area-2',
@@ -68,6 +69,7 @@ export const MOCK_CONCEPTS: Concept[] = [
     status: 'learning',
     lastStudiedAt: subDays(today, 1),
     nextSessionAt: addDays(today, 2),
+    sortOrder: 0,
   },
   {
     id: 'concept-5',
@@ -76,9 +78,9 @@ export const MOCK_CONCEPTS: Concept[] = [
     description: 'The process of strengthening memories during sleep.',
     status: 'new',
     lastStudiedAt: null,
-    nextSessionAt: today,
+    nextSessionAt: null,
+    sortOrder: 0,
   },
-  // Mathematics
   {
     id: 'concept-6',
     areaId: 'area-3',
@@ -87,6 +89,7 @@ export const MOCK_CONCEPTS: Concept[] = [
     status: 'learning',
     lastStudiedAt: subDays(today, 3),
     nextSessionAt: today,
+    sortOrder: 0,
   },
 ];
 

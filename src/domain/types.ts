@@ -23,6 +23,7 @@ export interface Concept {
   status: ConceptStatus;
   lastStudiedAt: Date | null;
   nextSessionAt: Date | null;
+  sortOrder: number;
 }
 
 export type SessionType = 'initial' | 'practice' | 'review' | 'rescue';
