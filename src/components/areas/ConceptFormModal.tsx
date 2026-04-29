@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/Button';
 
 interface Props {
   areaId: string;
-  onSave: (data: { areaId: string; title: string; description?: string }) => Promise<void>;
+  onSave: (data: { areaId: string; title: string; description?: string }) => Promise<unknown>;
   onClose: () => void;
 }
 

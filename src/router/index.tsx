@@ -2,17 +2,11 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { Dashboard } from '@/pages/Dashboard';
 import { Login } from '@/pages/Login';
-import { Areas } from '@/pages/Areas';
+import { Concepts } from '@/pages/Concepts';
 import { Session } from '@/pages/Session';
 import { Review } from '@/pages/Review';
+import { History } from '@/pages/History';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
-
-const ComingSoon = ({ title }: { title: string }) => (
-  <div className="flex flex-col items-center justify-center h-64 text-gray-400">
-    <p className="text-lg font-medium">{title}</p>
-    <p className="text-sm mt-1">Em breve</p>
-  </div>
-);
 
 export const router = createBrowserRouter([
   {
@@ -27,10 +21,12 @@ export const router = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
-      { index: true, element: <Dashboard /> },
-      { path: 'session/:id', element: <Session /> },
-      { path: 'review', element: <Review /> },
-      { path: 'areas', element: <Areas /> },
+      { index: true,             element: <Dashboard /> },
+      { path: 'concepts',        element: <Concepts /> },
+      { path: 'history',         element: <History /> },
+      { path: 'review',          element: <Review /> },
+      { path: 'session/:id',     element: <Session /> },
+      { path: 'areas',           element: <Navigate to="/concepts" replace /> },
     ],
   },
   {

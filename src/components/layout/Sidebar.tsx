@@ -6,6 +6,7 @@ import {
   Brain,
   ChevronLeft,
   ChevronRight,
+  History,
 } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
 
@@ -15,9 +16,10 @@ interface SidebarProps {
 }
 
 const navItems = [
-  { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
-  { to: '/review', icon: RotateCcw, label: 'Reviews' },
-  { to: '/areas', icon: Layers, label: 'Areas' },
+  { to: '/',         icon: LayoutDashboard, label: 'Today' },
+  { to: '/concepts', icon: Layers,          label: 'Concepts' },
+  { to: '/review',   icon: RotateCcw,       label: 'Review' },
+  { to: '/history',  icon: History,         label: 'History' },
 ];
 
 const areaColorMap: Record<string, string> = {

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, CheckCircle2, Circle, Plus, Trash2, ChevronRight, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
@@ -140,7 +140,6 @@ export function Session() {
   const { saveSession }     = useSessions();
 
   const { elapsed, label: elapsedLabel } = useElapsed();
-  const startedAt = useRef(new Date());
 
   const [currentPhase, setCurrentPhase]       = useState(0);
   const [phasesCompleted, setPhasesCompleted] = useState<number[]>([]);

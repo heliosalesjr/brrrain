@@ -1,10 +1,20 @@
-import { addDoc } from 'firebase/firestore';
+import { useEffect } from 'react';
+import { onSnapshot, addDoc } from 'firebase/firestore';
 import { sessionsCollection } from '@/firebase/collections';
 import { useAppStore } from '@/store/useAppStore';
 import type { Session, SessionType } from '@/domain/types';
 
 export function useSessions() {
-  const { addSession } = useAppStore();
+  const { setSessions, addSession } = useAppStore();
+
+  useEffect(() => {
+    const col = sessionsCollection();
+    if (!col) return;
+    const unsubscribe = onSnapshot(col, (snapshot) => {
+      setSessions(snapshot.docs.map((d) => d.data()));
+    });
+    return unsubscribe;
+  }, [setSessions]);
 
   const saveSession = async (input: {
     areaId: string;

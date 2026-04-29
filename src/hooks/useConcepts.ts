@@ -7,6 +7,13 @@ import { useAppStore } from '@/store/useAppStore';
 import type { Concept, ConceptStatus } from '@/domain/types';
 import { addDays } from 'date-fns';
 
+function nextSessionForStatus(status: ConceptStatus): Date | null {
+  if (status === 'mastered')  return addDays(new Date(), 30);
+  if (status === 'reviewing') return addDays(new Date(), 3);
+  if (status === 'learning')  return addDays(new Date(), 1);
+  return null; // 'new' — no schedule until first study session
+}
+
 export function useConcepts(areaId?: string) {
   const { concepts, setConcepts, addConcept, updateConcept, removeConcept, setError } =
     useAppStore();
@@ -45,10 +52,7 @@ export function useConcepts(areaId?: string) {
     const col = conceptsCollection();
 
     const status = input.status ?? 'new';
-    const nextSessionAt =
-      status === 'mastered' ? addDays(new Date(), 30)
-      : status === 'reviewing' ? addDays(new Date(), 3)
-      : addDays(new Date(), 1);
+    const nextSessionAt = nextSessionForStatus(status);
 
     const concept: Concept = {
       id: `local-${Date.now()}`,
@@ -93,9 +97,19 @@ export function useConcepts(areaId?: string) {
     await deleteDoc(doc(db, 'concepts', id));
   };
 
+  const updateConceptStatus = async (id: string, status: ConceptStatus) => {
+    const partial: Partial<Concept> = { status, nextSessionAt: nextSessionForStatus(status) };
+    if (!isConfigured || !db) {
+      updateConcept(id, partial);
+      return;
+    }
+    await updateDoc(doc(db, 'concepts', id).withConverter(conceptConverter), partial);
+    updateConcept(id, partial);
+  };
+
   const filteredConcepts = areaId
     ? concepts.filter((c) => c.areaId === areaId)
     : concepts;
 
-  return { concepts: filteredConcepts, createConcept, markStudied, deleteConcept };
+  return { concepts: filteredConcepts, createConcept, markStudied, deleteConcept, updateConceptStatus };
 }
